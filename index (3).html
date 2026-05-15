@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Objem – převody jednotek a výpočty</title>
+  <style>
+    :root{
+      --bg1:#dbeafe;
+      --bg2:#ccfbf1;
+      --bg3:#fef3c7;
+      --dark:#0f172a;
+      --muted:#475569;
+      --line:#cbd5e1;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+      color:var(--dark);
+    }
+
+    .page{
+      max-width:1280px;
+      margin:0 auto;
+      padding:24px;
+    }
+
+    header{
+      background:rgba(255,255,255,0.91);
+      border:2px solid rgba(255,255,255,0.95);
+      box-shadow:0 18px 40px rgba(15,23,42,0.13);
+      border-radius:28px;
+      padding:28px;
+      text-align:center;
+      margin-bottom:22px;
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size:42px;
+      letter-spacing:1px;
+      color:#155e75;
+    }
+
+    .subtitle{
+      font-size:18px;
+      line-height:1.5;
+      color:var(--muted);
+      max-width:1030px;
+      margin:0 auto;
+    }
+
+    .author{
+      margin-top:14px;
+      font-size:15px;
+      color:#334155;
+      font-weight:bold;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap:22px;
+      align-items:start;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.94);
+      border-radius:26px;
+      padding:22px;
+      box-shadow:0 18px 35px rgba(15,23,42,0.12);
+      border:1px solid rgba(255,255,255,0.9);
+    }
+
+    .card h2{
+      margin:0 0 16px;
+      font-size:25px;
+      color:#0f172a;
+    }
+
+    .tank-wrap{
+      background:linear-gradient(180deg,#cffafe,#a5f3fc);
+      border:3px solid #0891b2;
+      border-radius:22px;
+      padding:18px;
+      margin-bottom:18px;
+    }
+
+    .tank-title{
+      font-weight:bold;
+      font-size:20px;
+      text-align:center;
+      margin-bottom:12px;
+      color:#164e63;
+    }
+
+    .tank-area{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      align-items:end;
+      min-height:275px;
+      padding:8px 10px 0;
+    }
+
+    .glass-block{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+    }
+
+    .glass{
+      position:relative;
+      height:220px;
+      border:4px solid #0f172a;
+      border-top:6px solid #0f172a;
+      border-radius:0 0 22px 22px;
+      background:rgba(255,255,255,0.55);
+      overflow:hidden;
+      box-shadow: inset 0 0 15px rgba(255,255,255,.8), 0 12px 20px rgba(15,23,42,.14);
+    }
+
+    .glass.narrow{ width:88px; }
+    .glass.wide{ width:160px; }
+
+    .water{
+      position:absolute;
+      bottom:0;
+      left:0;
+      width:100%;
+      height:45%;
+      background:linear-gradient(180deg, rgba(56,189,248,.75), rgba(2,132,199,.95));
+      transition:height .25s ease;
+    }
+
+    .water::before{
+      content:"";
+      position:absolute;
+      top:-8px;
+      left:0;
+      width:100%;
+      height:18px;
+      border-radius:50%;
+      background:rgba(186,230,253,.9);
+    }
+
+    .glass-label{
+      font-size:14px;
+      font-weight:bold;
+      color:#164e63;
+      background:rgba(255,255,255,.9);
+      border:1px solid #67e8f9;
+      border-radius:999px;
+      padding:6px 10px;
+      text-align:center;
+    }
+
+    .compare-note{
+      background:#ecfeff;
+      border:1px solid #67e8f9;
+      border-radius:16px;
+      padding:12px;
+      font-size:14px;
+      line-height:1.45;
+      color:#164e63;
+      margin-top:14px;
+      text-align:center;
+      font-weight:bold;
+    }
+
+    .display{
+      background:#020617;
+      color:#22c55e;
+      border-radius:18px;
+      padding:18px;
+      text-align:center;
+      font-size:28px;
+      font-weight:bold;
+      letter-spacing:1px;
+      box-shadow: inset 0 0 20px rgba(34,197,94,0.22);
+      margin:18px 0;
+      min-height:70px;
+    }
+
+    label{
+      display:block;
+      font-weight:bold;
+      margin-bottom:7px;
+      font-size:15px;
+    }
+
+    input, select{
+      width:100%;
+      padding:13px 15px;
+      border-radius:14px;
+      border:2px solid var(--line);
+      font-size:17px;
+      background:#fff;
+      outline:none;
+    }
+
+    input:focus, select:focus{
+      border-color:#0891b2;
+      box-shadow:0 0 0 4px rgba(8,145,178,0.14);
+    }
+
+    .input-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .mode-box{
+      background:#ecfeff;
+      border:1px solid #a5f3fc;
+      padding:15px;
+      border-radius:18px;
+      margin-bottom:16px;
+    }
+
+    .mode-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      margin-top:8px;
+    }
+
+    .quick{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:14px;
+    }
+
+    button{
+      border:none;
+      border-radius:999px;
+      padding:10px 14px;
+      font-size:15px;
+      font-weight:bold;
+      cursor:pointer;
+      background:#cffafe;
+      color:#164e63;
+      transition:.2s;
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+      background:#a5f3fc;
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+
+    .unit{
+      border-radius:18px;
+      padding:15px;
+      color:white;
+      min-height:105px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      box-shadow:0 10px 20px rgba(15,23,42,0.12);
+    }
+
+    .unit:nth-child(1){background:linear-gradient(135deg,#2563eb,#1d4ed8);}
+    .unit:nth-child(2){background:linear-gradient(135deg,#0891b2,#0e7490);}
+    .unit:nth-child(3){background:linear-gradient(135deg,#16a34a,#15803d);}
+    .unit:nth-child(4){background:linear-gradient(135deg,#ea580c,#c2410c);}
+    .unit:nth-child(5){background:linear-gradient(135deg,#7c3aed,#6d28d9);}
+    .unit:nth-child(6){background:linear-gradient(135deg,#db2777,#be185d);}
+    .unit:nth-child(7){background:linear-gradient(135deg,#0f766e,#115e59);}
+    .unit:nth-child(8){background:linear-gradient(135deg,#475569,#334155);}
+    .unit:nth-child(9){background:linear-gradient(135deg,#9333ea,#7e22ce);}
+    .unit:nth-child(10){background:linear-gradient(135deg,#dc2626,#b91c1c);}
+    .unit:nth-child(11){background:linear-gradient(135deg,#ca8a04,#a16207);}
+    .unit:nth-child(12){background:linear-gradient(135deg,#4f46e5,#4338ca);}
+
+    .unit .top{
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      align-items:flex-start;
+    }
+
+    .symbol{
+      font-size:22px;
+      font-weight:bold;
+    }
+
+    .spoken{
+      font-size:14px;
+      opacity:.9;
+      text-align:right;
+    }
+
+    .value{
+      font-size:20px;
+      font-weight:bold;
+      word-break:break-word;
+      margin-top:12px;
+    }
+
+    .full{
+      font-size:13px;
+      opacity:.92;
+      margin-top:4px;
+    }
+
+    .explain{
+      margin-top:22px;
+      background:#fff7ed;
+      border:2px solid #fed7aa;
+      border-radius:22px;
+      padding:18px;
+      line-height:1.55;
+      font-size:16px;
+    }
+
+    .explain strong{
+      color:#9a3412;
+    }
+
+    .formula{
+      display:grid;
+      grid-template-columns: repeat(2,1fr);
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .formula div{
+      background:#ffffff;
+      border:1px solid #fed7aa;
+      border-radius:14px;
+      padding:11px;
+      text-align:center;
+      font-weight:bold;
+      color:#7c2d12;
+    }
+
+    .law{
+      margin-top:14px;
+      background:#eff6ff;
+      border:2px solid #bfdbfe;
+      border-radius:18px;
+      padding:14px;
+      font-size:15px;
+      line-height:1.5;
+    }
+
+    .pi-box{
+      margin-top:14px;
+      background:#fdf2f8;
+      border:2px solid #fbcfe8;
+      border-radius:18px;
+      padding:14px;
+      font-size:17px;
+      font-weight:bold;
+      color:#831843;
+      text-align:center;
+    }
+
+    footer{
+      text-align:center;
+      margin-top:18px;
+      color:#475569;
+      font-size:14px;
+    }
+
+    @media (max-width:950px){
+      .grid{ grid-template-columns:1fr; }
+      h1{ font-size:34px; }
+      .results{ grid-template-columns:1fr; }
+      .input-row,.mode-grid,.formula{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>OBJEM</h1>
+      <p class="subtitle">
+        Objem nám říká, kolik prostoru těleso zabírá nebo kolik kapaliny se vejde do nádoby.
+        Měříme ho například u vody ve sklenici, bazénu, akvária, krabice, nádrže, lahve nebo místnosti.
+        Objem zapisujeme v jednotkách jako cm³, dm³, m³, ml nebo l.
+      </p>
+      <p class="subtitle" style="margin-top:10px;">
+        <strong>K čemu je to dobré?</strong> Objem využiješ při vaření, měření nápojů, plnění bazénu,
+        výpočtu objemu krabice, nádrže, sudu, betonu, zeminy, akvária i při nákupu kapalin.
+      </p>
+      <div class="author">Autorka: Mgr. Ivana Langweilová</div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2>Model objemu</h2>
+
+        <div class="tank-wrap">
+          <div class="tank-title">STEJNÝ OBJEM, JINÁ VÝŠKA HLADINY</div>
+          <div class="tank-area">
+            <div class="glass-block">
+              <div class="glass narrow">
+                <div class="water" id="waterNarrow"></div>
+              </div>
+              <div class="glass-label">úzká nádoba<br><span id="narrowLabel">vyšší hladina</span></div>
+            </div>
+
+            <div class="glass-block">
+              <div class="glass wide">
+                <div class="water" id="waterWide"></div>
+              </div>
+              <div class="glass-label">široká nádoba<br><span id="wideLabel">nižší hladina</span></div>
+            </div>
+          </div>
+          <div class="compare-note">
+            Do obou nádob je nalitý stejný objem. V úzké nádobě je hladina vyšší, v široké nižší.
+            Objem tedy nezávisí jen na výšce hladiny, ale také na velikosti dna nádoby.
+          </div>
+        </div>
+
+        <div class="display" id="mainDisplay">1.000 l</div>
+
+        <div class="mode-box">
+          <label for="modeSelect">Co chceš dělat?</label>
+          <select id="modeSelect">
+            <option value="convert" selected>Zadat hotový objem a převést ho na jiné jednotky</option>
+            <option value="cuboid">Vypočítat objem kvádru: V = a · b · c</option>
+            <option value="cube">Vypočítat objem krychle: V = a³</option>
+            <option value="cylinder">Vypočítat objem válce: V = π · r² · v</option>
+            <option value="cone">Vypočítat objem kužele: V = (π · r² · v) / 3</option>
+            <option value="pyramid">Vypočítat objem jehlanu: V = (Sₚ · v) / 3</option>
+            <option value="sphere">Vypočítat objem koule: V = (4/3) · π · r³</option>
+          </select>
+
+          <div id="convertBox">
+            <div class="input-row" style="margin-top:14px;">
+              <div>
+                <label for="valueInput">Zadej objem:</label>
+                <input id="valueInput" type="number" step="any" value="1" min="0" />
+              </div>
+              <div>
+                <label for="unitSelect">Vyber jednotku:</label>
+                <select id="unitSelect">
+                  <optgroup label="Školní jednotky objemu">
+                    <option value="mm3">mm³ – milimetr krychlový</option>
+                    <option value="cm3">cm³ – centimetr krychlový</option>
+                    <option value="dm3">dm³ – decimetr krychlový</option>
+                    <option value="m3">m³ – metr krychlový</option>
+                    <option value="ml">ml – mililitr</option>
+                    <option value="cl">cl – centilitr</option>
+                    <option value="dl">dl – decilitr</option>
+                    <option value="l" selected>l – litr</option>
+                    <option value="hl">hl – hektolitr</option>
+                  </optgroup>
+                  <optgroup label="Cizí jednotky objemu">
+                    <option value="floz_us">fl oz US – americká tekutá unce</option>
+                    <option value="cup_us">cup US – americký hrnek</option>
+                    <option value="pt_us">pt US – americká pinta</option>
+                    <option value="qt_us">qt US – americký kvart</option>
+                    <option value="gal_us">gal US – americký galon</option>
+                    <option value="in3">in³ – cubic inch / krychlový palec</option>
+                    <option value="ft3">ft³ – cubic foot / krychlová stopa</option>
+                    <option value="yd3">yd³ – cubic yard / krychlový yard</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div id="calcBox" style="display:none;">
+            <div class="mode-grid">
+              <div id="inputABox">
+                <label for="inputA" id="labelA">Hrana a [m]:</label>
+                <input id="inputA" type="number" step="any" value="1" min="0" />
+              </div>
+              <div id="inputBBox">
+                <label for="inputB" id="labelB">Hrana b [m]:</label>
+                <input id="inputB" type="number" step="any" value="1" min="0" />
+              </div>
+              <div id="inputCBox">
+                <label for="inputC" id="labelC">Hrana c [m]:</label>
+                <input id="inputC" type="number" step="any" value="1" min="0" />
+              </div>
+            </div>
+            <div class="hint" id="calcHint">Zadej rozměry v metrech. Výsledek se vypočítá v m³ a převede do ostatních jednotek.</div>
+          </div>
+        </div>
+
+        <div class="quick">
+          <button data-v="1" data-u="l">1 l</button>
+          <button data-v="250" data-u="ml">250 ml</button>
+          <button data-v="1" data-u="dm3">1 dm³</button>
+          <button data-v="1000" data-u="cm3">1000 cm³</button>
+          <button data-v="1" data-u="m3">1 m³</button>
+          <button data-v="1" data-u="gal_us">1 galon US</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Přepočet objemu na jiné jednotky</h2>
+
+        <div class="results" id="results"></div>
+
+        <div class="explain">
+          <strong>Zapamatuj si:</strong>
+          Objem vyjadřuje prostor. U kapaliny často používáme litry, u těles a prostoru krychlové jednotky.
+          Důležitý vztah je <strong>1 dm³ = 1 l</strong>. To znamená, že krychle o hraně 1 dm má objem přesně 1 litr.
+          <div class="formula">
+            <div>Kvádr: V = a · b · c</div>
+            <div>Krychle: V = a³</div>
+            <div>Válec: V = π · r² · v</div>
+            <div>Kužel: V = (π · r² · v) / 3</div>
+            <div>Jehlan: V = (Sₚ · v) / 3</div>
+            <div>Koule: V = (4/3) · π · r³</div>
+            <div>1 l = 1 dm³ = 1000 cm³</div>
+            <div>1 m³ = 1000 l</div>
+          </div>
+
+          <div class="pi-box">
+            Pro výpočty válce, kužele a koule používáme přibližnou hodnotu: π = 3,14
+          </div>
+
+          <div class="law">
+            <strong>Důležité pravidlo pro převody objemu:</strong><br>
+            U objemu převádíme tři rozměry. Proto platí například:
+            1 m = 100 cm, ale 1 m³ = 100 · 100 · 100 = 1 000 000 cm³.
+            Proto mají jednotky objemu značku s „krychlí“: mm³, cm³, dm³, m³.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Webová učební pomůcka pro převody jednotek objemu a základní výpočty objemu těles.
+    </footer>
+  </div>
+
+  <script>
+    const modeSelect = document.getElementById("modeSelect");
+    const convertBox = document.getElementById("convertBox");
+    const calcBox = document.getElementById("calcBox");
+    const valueInput = document.getElementById("valueInput");
+    const unitSelect = document.getElementById("unitSelect");
+    const inputA = document.getElementById("inputA");
+    const inputB = document.getElementById("inputB");
+    const inputC = document.getElementById("inputC");
+    const inputBBox = document.getElementById("inputBBox");
+    const inputCBox = document.getElementById("inputCBox");
+    const labelA = document.getElementById("labelA");
+    const labelB = document.getElementById("labelB");
+    const labelC = document.getElementById("labelC");
+    const calcHint = document.getElementById("calcHint");
+    const display = document.getElementById("mainDisplay");
+    const results = document.getElementById("results");
+    const waterNarrow = document.getElementById("waterNarrow");
+    const waterWide = document.getElementById("waterWide");
+    const narrowLabel = document.getElementById("narrowLabel");
+    const wideLabel = document.getElementById("wideLabel");
+
+    const units = {
+      mm3: { symbol:"mm³", spoken:"milimetr krychlový", full:"milimetr krychlový", toM3:1e-9 },
+      cm3: { symbol:"cm³", spoken:"centimetr krychlový", full:"centimetr krychlový", toM3:1e-6 },
+      dm3: { symbol:"dm³", spoken:"decimetr krychlový", full:"decimetr krychlový", toM3:0.001 },
+      m3:  { symbol:"m³", spoken:"metr krychlový", full:"metr krychlový", toM3:1 },
+      ml:  { symbol:"ml", spoken:"mililitr", full:"mililitr", toM3:1e-6 },
+      cl:  { symbol:"cl", spoken:"centilitr", full:"centilitr", toM3:1e-5 },
+      dl:  { symbol:"dl", spoken:"decilitr", full:"decilitr", toM3:1e-4 },
+      l:   { symbol:"l", spoken:"litr", full:"litr", toM3:0.001 },
+      hl:  { symbol:"hl", spoken:"hektolitr", full:"hektolitr", toM3:0.1 },
+      floz_us: { symbol:"fl oz US", spoken:"tekutá unce", full:"americká tekutá unce", toM3:0.0000295735295625 },
+      cup_us:  { symbol:"cup US", spoken:"hrnek", full:"americký hrnek", toM3:0.0002365882365 },
+      pt_us:   { symbol:"pt US", spoken:"pinta", full:"americká pinta", toM3:0.000473176473 },
+      qt_us:   { symbol:"qt US", spoken:"kvart", full:"americký kvart", toM3:0.000946352946 },
+      gal_us:  { symbol:"gal US", spoken:"galon", full:"americký galon", toM3:0.003785411784 },
+      in3: { symbol:"in³", spoken:"krychlový palec", full:"cubic inch", toM3:0.000016387064 },
+      ft3: { symbol:"ft³", spoken:"krychlová stopa", full:"cubic foot", toM3:0.028316846592 },
+      yd3: { symbol:"yd³", spoken:"krychlový yard", full:"cubic yard", toM3:0.764554857984 }
+    };
+
+    const outputOrder = ["ml","cl","dl","l","hl","cm3","dm3","m3","floz_us","cup_us","gal_us","ft3"];
+
+    function formatNumber(n, maxDecimals = 6){
+      if (!isFinite(n)) return "—";
+      const abs = Math.abs(n);
+      if (abs !== 0 && (abs >= 1e10 || abs < 1e-6)) {
+        return n.toExponential(4).replace(".", ",");
+      }
+      return new Intl.NumberFormat("cs-CZ", {
+        maximumFractionDigits: maxDecimals,
+        minimumFractionDigits: 0
+      }).format(n);
+    }
+
+    function toM3(value, unit){ return value * units[unit].toM3; }
+    function fromM3(m3, unit){ return m3 / units[unit].toM3; }
+
+    function readPositive(el){
+      const v = parseFloat(el.value);
+      if(isNaN(v) || v < 0) return 0;
+      return v;
+    }
+
+    function currentVolumeM3(){
+      const mode = modeSelect.value;
+
+      if(mode === "convert"){
+        return toM3(readPositive(valueInput), unitSelect.value);
+      }
+
+      const a = readPositive(inputA);
+      const b = readPositive(inputB);
+      const c = readPositive(inputC);
+
+      if(mode === "cuboid") return a * b * c;
+      if(mode === "cube") return a * a * a;
+      if(mode === "cylinder") return 3.14 * a * a * b;
+      if(mode === "cone") return (3.14 * a * a * b) / 3;
+      if(mode === "pyramid") return (a * b) / 3;
+      if(mode === "sphere") return (4 / 3) * 3.14 * a * a * a;
+
+      return 0;
+    }
+
+    function updateMode(){
+      const mode = modeSelect.value;
+
+      if(mode === "convert"){
+        convertBox.style.display = "block";
+        calcBox.style.display = "none";
+      } else {
+        convertBox.style.display = "none";
+        calcBox.style.display = "block";
+      }
+
+      inputBBox.style.display = "block";
+      inputCBox.style.display = "block";
+
+      if(mode === "cuboid"){
+        labelA.textContent = "Délka a [m]:";
+        labelB.textContent = "Šířka b [m]:";
+        labelC.textContent = "Výška c [m]:";
+        calcHint.textContent = "Objem kvádru vypočítáme podle vzorce V = a · b · c.";
+      }
+
+      if(mode === "cube"){
+        labelA.textContent = "Hrana a [m]:";
+        inputBBox.style.display = "none";
+        inputCBox.style.display = "none";
+        calcHint.textContent = "Objem krychle vypočítáme podle vzorce V = a³.";
+      }
+
+      if(mode === "cylinder"){
+        labelA.textContent = "Poloměr r [m]:";
+        labelB.textContent = "Výška v [m]:";
+        inputCBox.style.display = "none";
+        calcHint.textContent = "Objem válce vypočítáme podle vzorce V = π · r² · v. Používáme π = 3,14.";
+      }
+
+      if(mode === "cone"){
+        labelA.textContent = "Poloměr r [m]:";
+        labelB.textContent = "Výška v [m]:";
+        inputCBox.style.display = "none";
+        calcHint.textContent = "Objem kužele vypočítáme podle vzorce V = (π · r² · v) / 3. Používáme π = 3,14.";
+      }
+
+      if(mode === "pyramid"){
+        labelA.textContent = "Obsah podstavy Sₚ [m²]:";
+        labelB.textContent = "Výška v [m]:";
+        inputCBox.style.display = "none";
+        calcHint.textContent = "Objem jehlanu vypočítáme podle vzorce V = (Sₚ · v) / 3.";
+      }
+
+      if(mode === "sphere"){
+        labelA.textContent = "Poloměr r [m]:";
+        inputBBox.style.display = "none";
+        inputCBox.style.display = "none";
+        calcHint.textContent = "Objem koule vypočítáme podle vzorce V = (4/3) · π · r³. Používáme π = 3,14.";
+      }
+
+      update();
+    }
+
+    function updateWater(m3){
+      const liters = m3 * 1000;
+
+      /* Obě nádoby mají stejný objem kapaliny, ale jinou plochu dna.
+         Úzká nádoba má menší dno, proto je hladina výš.
+         Široká nádoba má větší dno, proto je hladina níž. */
+      const capacityLike = Math.min(liters, 5);
+      const narrowHeight = Math.max(5, Math.min(95, capacityLike / 5 * 90));
+      const wideHeight = Math.max(3, Math.min(70, narrowHeight * 0.55));
+
+      waterNarrow.style.height = narrowHeight + "%";
+      waterWide.style.height = wideHeight + "%";
+
+      narrowLabel.textContent = formatNumber(liters, 3) + " l";
+      wideLabel.textContent = formatNumber(liters, 3) + " l";
+    }
+
+    function update(){
+      const m3 = currentVolumeM3();
+      const mode = modeSelect.value;
+
+      if(mode === "convert"){
+        const value = readPositive(valueInput);
+        display.textContent = `${formatNumber(value, 6)} ${units[unitSelect.value].symbol}`;
+      } else {
+        display.textContent = `${formatNumber(m3, 6)} m³ = ${formatNumber(m3 * 1000, 6)} l`;
+      }
+
+      updateWater(m3);
+
+      results.innerHTML = "";
+      outputOrder.forEach(key => {
+        const u = units[key];
+        const converted = fromM3(m3, key);
+
+        const card = document.createElement("div");
+        card.className = "unit";
+        card.innerHTML = `
+          <div class="top">
+            <div class="symbol">${u.symbol}</div>
+            <div class="spoken">${u.spoken}</div>
+          </div>
+          <div>
+            <div class="value">${formatNumber(converted, 8)} ${u.symbol}</div>
+            <div class="full">${u.full}</div>
+          </div>
+        `;
+        results.appendChild(card);
+      });
+    }
+
+    modeSelect.addEventListener("change", updateMode);
+    valueInput.addEventListener("input", update);
+    unitSelect.addEventListener("change", update);
+    inputA.addEventListener("input", update);
+    inputB.addEventListener("input", update);
+    inputC.addEventListener("input", update);
+
+    document.querySelectorAll("button[data-v]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        modeSelect.value = "convert";
+        updateMode();
+        valueInput.value = btn.dataset.v;
+        unitSelect.value = btn.dataset.u;
+        update();
+      });
+    });
+
+    updateMode();
+  </script>
+</body>
+</html>
